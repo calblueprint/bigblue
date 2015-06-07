@@ -119,11 +119,17 @@ class ScoreKeeper
     all = @top(@cache.scores.length)
     all.sort((a,b) -> b.score - a.score).reverse().slice(0,amount)
 
+  slackTrailingColonFilter: (str) ->
+    if str[0] != ':' && str[str.length - 1] == ':'
+      return str[0..-2]
+    return str
+
 module.exports = (robot) ->
   scoreKeeper = new ScoreKeeper(robot)
 
   robot.hear /([\w\S]+)([\W\s]*)?(\+\+)(.*)$/i, (msg) ->
     name = msg.match[1].trim()
+    name = scoreKeeper.slackTrailingColonFilter(name)
     from = msg.message.user.name
     real_name = scoreKeeper.findUserByMentionName(name)
 
@@ -137,6 +143,7 @@ module.exports = (robot) ->
 
   robot.hear /([\w\S]+)([\W\s]*)?(\-\-)(.*)$/i, (msg) ->
     name = msg.match[1].trim()
+    name = scoreKeeper.slackTrailingColonFilter(name)
     from = msg.message.user.name
     real_name = scoreKeeper.findUserByMentionName(name)
 
