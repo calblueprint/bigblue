@@ -47,6 +47,9 @@ class ScoreKeeper
 
   findUserByMentionName: (mentionName) ->
     mentionName = mentionName.replace(/@/g, "")
+    # Slack trailing colon filter
+    if mentionName[0] != ':' && mentionName[mentionName.length - 1] == ':'
+      mentionName = mentionName[0..-2]
     for user_jid, user of @robot.brain.data.users
       if user.mention_name == mentionName
         return user.name
@@ -119,17 +122,11 @@ class ScoreKeeper
     all = @top(@cache.scores.length)
     all.sort((a,b) -> b.score - a.score).reverse().slice(0,amount)
 
-  slackTrailingColonFilter: (str) ->
-    if str[0] != ':' && str[str.length - 1] == ':'
-      return str[0..-2]
-    return str
-
 module.exports = (robot) ->
   scoreKeeper = new ScoreKeeper(robot)
 
   robot.hear /([\w\S]+)([\W\s]*)?(\+\+)(.*)$/i, (msg) ->
     name = msg.match[1].trim()
-    name = scoreKeeper.slackTrailingColonFilter(name)
     from = msg.message.user.name
     real_name = scoreKeeper.findUserByMentionName(name)
 
@@ -139,11 +136,10 @@ module.exports = (robot) ->
 
     newScore = scoreKeeper.add(real_name, from)
 
-    if newScore? then msg.send "#{name} has #{newScore} points."
+    if newScore? then msg.send "#{real_name} has #{newScore} points."
 
   robot.hear /([\w\S]+)([\W\s]*)?(\-\-)(.*)$/i, (msg) ->
     name = msg.match[1].trim()
-    name = scoreKeeper.slackTrailingColonFilter(name)
     from = msg.message.user.name
     real_name = scoreKeeper.findUserByMentionName(name)
 
@@ -152,7 +148,7 @@ module.exports = (robot) ->
       return
 
     newScore = scoreKeeper.subtract(real_name, from)
-    if newScore? then msg.send "#{name} has #{newScore} points."
+    if newScore? then msg.send "#{real_name} has #{newScore} points."
 
   robot.respond /score (for\s)?(.*)/i, (msg) ->
     name = msg.match[2].trim().toLowerCase()
