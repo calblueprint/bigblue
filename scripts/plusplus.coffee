@@ -134,6 +134,9 @@ module.exports = (robot) ->
       msg.send "Don't be selfish, #{name}."
       return
 
+    if from == 'slackbot': # slackbot shouldn't affect score
+      return
+
     newScore = scoreKeeper.add(real_name, from)
 
     if newScore? then msg.send "#{real_name} has #{newScore} points."
