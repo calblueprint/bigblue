@@ -57,6 +57,9 @@ module.exports = (robot) ->
   bplol = (message) ->
     "@1goon @jaylin @j @jdu @kwu #{message}"
 
+  yungcsgod = (message) ->
+    "@jonchuch #{message}"
+
   # Commands to listen for
   robot.hear /@eteam (.*)$/i, (msg) ->
     msg.send eteam(msg.match[1])
@@ -132,3 +135,7 @@ module.exports = (robot) ->
 
   robot.hear /@bplol (.*)$/i, (msg) ->
     msg.send bplol(msg.match[1])
+
+  robot.hear /@yungcsgod  (.*)$/i, (msg) ->
+    msg.send yungcsgod(msg.match[1])
+
