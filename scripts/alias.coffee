@@ -1,4 +1,18 @@
-clark = require("clark").clark
+# Description:
+#   Set aliases for people's names.
+#
+# Dependencies:
+#
+# Configuration:
+#
+# Commands:
+#   @<alias>
+#   hubot alias set <alias> <mention>
+#   hubot alias set <alias> [[<mention>, ]*<mention>]
+#   hubot alias get <alias>
+#
+# Author:
+#   aykamko
 
 class AliasStore
   constructor: (@robot) ->
