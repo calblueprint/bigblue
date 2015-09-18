@@ -90,4 +90,4 @@ module.exports = (robot) ->
 
     if mentions.length == 0
       return
-    msg.send "#{mentions.join(' ')}: ^^^"
+    msg.send "#{mentions.join(' ')}: ↑↑↑"
