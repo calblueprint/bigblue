@@ -30,7 +30,7 @@ class AliasStore
       @cache.namesToAliases = @robot.brain.data.namesToAliases
 
   getNamesForAlias: (alias) ->
-    return @cache.aliasToNames[alias.replace(/@/g, '')]
+    return @cache.aliasToNames[alias.replace(/[@:]/g, '')]
 
   saveAlias: (alias, names) ->
     if !@brainLoaded
