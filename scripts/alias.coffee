@@ -1,134 +1,79 @@
+clark = require("clark").clark
+
+class AliasStore
+  constructor: (@robot) ->
+    @brainLoaded = false
+
+    @cache =
+      aliasToNames: {}
+      namesToAliases: {}
+
+    @robot.brain.on 'loaded', =>
+      @robot.brain.data.aliasToNames ||= {}
+      @robot.brain.data.namesToAliases ||= {}
+      @brainLoaded = true
+      @cache.aliasToNames = @robot.brain.data.aliasToNames
+      @cache.namesToAliases = @robot.brain.data.namesToAliases
+
+  getNamesForAlias: (alias) ->
+    return @cache.aliasToNames[alias.replace(/@/g, '')]
+
+  saveAlias: (alias, names) ->
+    if !@brainLoaded
+      self = this
+      setTimeout((-> self.saveAlias(alias, names)), 1000)
+      return
+    @robot.brain.data.aliasToNames[alias] = names
+    for n in names
+      @robot.brain.data.namesToAliases[n] ||= []
+      @robot.brain.data.namesToAliases[n].push alias
+    @robot.brain.emit('save', @robot.brain.data)
+
+  addAlias: (alias, names) ->
+    @cache.aliasToNames[alias] = names
+    for n in names
+      @cache.namesToAliases[n] ||= []
+      @cache.namesToAliases[n].push alias
+    # asynchonously save to brain
+    self = this
+    setTimeout((-> self.saveAlias(alias, names)), 0)
+
+  getAliases: (alias) ->
+    return @cache.namesToAliases[alias]
+
 module.exports = (robot) ->
+  aliasStore = new AliasStore(robot)
 
-  eteam = (message) ->
-    "@jaylin @sam @JSONDerulo @merrymelissaday @vivekbloop #{message}"
+  robot.respond /(?:alias set|set alias) @?(\S+) @?(\S+)$/i, (msg) ->
+    alias = msg.match[1]
+    names = [msg.match[2]]
+    aliasStore.addAlias(alias, names)
 
-  pls = (message) ->
-    "@pimplord @neezus @j @noah @vdawg @sam #{message}"
+    msg.send "Set alias from `@#{alias}` to `@#{names}`"
 
-  chairs = (message) ->
-    "@jessica @soo @tinabloop @yishanbloop @bae @bloopalli #{message}"
+  robot.respond /(?:alias set|set alias) @?(\S+) \[@?((?:\S+,\s+@?)*\S+)\]$/i, (msg) ->
+    alias = msg.match[1]
+    names = msg.match[2].split(/, ?@?/)
+    aliasStore.addAlias(alias, names)
 
-  bpasians = (message) ->
-    "@all #{message}"
+    msg.send "Set alias from `@#{alias}` to `@#{names.join(' @')}`"
 
-  bpgirls = (message) ->
-    "@elizabeth @bloopalli @ilean @jodreen @jaylin @melissa @tfu @jenniferbloop @ericabloop @jessica @soo @tinabloop @yishanbloop @sameerabloop @NikitaRau #{message}"
+  robot.respond /(?:alias get|get alias) @?(\S+)$/i, (msg) ->
+    name = msg.match[1]
+    aliases = aliasStore.getAliases(names) || []
 
-  bpindians = (message) ->
-    "@vdawg @neezus @deepsbloop @vivekbloop #{message}"
+    msg.send "Aliases for `@#{name}`: `@#{aliases.join(' @')}`"
 
-  bpsf = (message) ->
-    "@1goon @vdawg @vivekbloop @jaylin @sam #{message}"
+  robot.hear /(@\S+)/g, (msg) ->
+    if msg.message.text.match(/((s|g)et alias|alias (s|g)et)/)
+      return
+    mentions = []
+    for alias in msg.match
+      names = aliasStore.getNamesForAlias(alias)
+      if names
+        for n in names
+          mentions.push "@#{n}"
 
-  ros = (message) ->
-    "@sam @nahte @jodreen @ilean #{message}"
-
-  ff = (message) ->
-    "@tonybloop @vdawg @will @JSONDerulo @neezus @alton #{message}"
-
-  odalc = (message) ->
-    "@atsu @pimplord @vivekbloop @jdu @anthonyy #{message}"
-
-  phc = (message) ->
-    "@pimplord @alton @tonybloop @warren @ShimmyLi #{message}"
-
-  ws = (message) ->
-    "@neezus @jodreen @maxbloop @andrewbloop @chuckbobxd #{message}"
-
-  bphouse = (message) ->
-    "@mark @1goon @melissa @jdu @atsu #{message}"
-
-  worldreader = (message) ->
-    "@jdu @nahte @will @vdawg @nnarayen #{message}"
-
-  revolv = (message) ->
-    "@ericbloop @noah @sameerabloop @ayk @AndyQin #{message}"
-
-  foodshift = (message) ->
-    "@j @bloopalli @atsu @NikitaRau @ericabloop #{message}"
-
-  ea = (message) ->
-    "@merrymelissaday @warren @tofu @elizabeth @chuckbobxd #{message}"
-
-  blueops = (message) ->
-    "@sam @shieh @quintontarantino @tofu @bae #{message}"
-
-  bplol = (message) ->
-    "@1goon @jaylin @j @jdu @kwu #{message}"
-
-  # Commands to listen for
-  robot.hear /@eteam (.*)$/i, (msg) ->
-    msg.send eteam(msg.match[1])
-
-  robot.hear /@pls (.*)$/i, (msg) ->
-    msg.send pls(msg.match[1])
-
-  robot.hear /@chairs (.*)$/i, (msg) ->
-    msg.send chairs(msg.match[1])
-
-  robot.hear /@bpsf (.*)$/i, (msg) ->
-    msg.send bpsf(msg.match[1])
-
-  robot.hear /@usomc (.*)$/i, (msg) ->
-    msg.send usomc(msg.match[1])
-
-  robot.hear /@rtr4c (.*)$/i, (msg) ->
-    msg.send rtr4c(msg.match[1])
-
-  robot.hear /@r161 (.*)$/i, (msg) ->
-    msg.send r161(msg.match[1])
-
-  robot.hear /@ros (.*)$/i, (msg) ->
-    msg.send ros(msg.match[1])
-
-  robot.hear /@ff (.*)$/i, (msg) ->
-    msg.send ff(msg.match[1])
-
-  robot.hear /@odalc (.*)$/i, (msg) ->
-    msg.send odalc(msg.match[1])
-
-  robot.hear /@bpgirls (.*)$/i, (msg) ->
-    msg.send bpgirls(msg.match[1])
-
-  robot.hear /@bpindians (.*)$/i, (msg) ->
-    msg.send bpindians(msg.match[1])
-
-  robot.hear /@bpasians (.*)$/i, (msg) ->
-    msg.send bpasians(msg.match[1])
-
-  robot.hear /@ws (.*)$/i, (msg) ->
-    msg.send ws(msg.match[1])
-
-  robot.hear /@JAMMM (.*)$/i, (msg) ->
-    msg.send ws(msg.match[1])
-
-  robot.hear /@bphouse (.*)$/i, (msg) ->
-    msg.send bphouse(msg.match[1])
-
-  robot.hear /@worldreader (.*)$/i, (msg) ->
-    msg.send worldreader(msg.match[1])
-
-  robot.hear /@foodshift (.*)$/i, (msg) ->
-    msg.send foodshift(msg.match[1])
-
-  robot.hear /@blueops (.*)$/i, (msg) ->
-    msg.send blueops(msg.match[1])
-
-  robot.hear /@JEEW (.*)$/i, (msg) ->
-    msg.send worldreader(msg.match[1])
-
-  robot.hear /@phc (.*)$/i, (msg) ->
-    msg.send phc(msg.match[1])
-
-  robot.hear /@projecthowardchen (.*)$/i, (msg) ->
-    msg.send phc(msg.match[1])
-
-  robot.hear /@revolv (.*)$/i, (msg) ->
-    msg.send revolv(msg.match[1])
-
-  robot.hear /@ea (.*)$/i, (msg) ->
-    msg.send ea(msg.match[1])
-
-  robot.hear /@bplol (.*)$/i, (msg) ->
-    msg.send bplol(msg.match[1])
+    if mentions.length == 0
+      return
+    msg.send "#{mentions.join(' ')}: ^^^"
