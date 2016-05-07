@@ -55,6 +55,13 @@ class ScoreKeeper
         return user.name
     return mentionName
 
+  isUser: (mentionName) ->
+    mentionName = mentionName.replace(/@/g, "")
+    if mentionName[0] != ':' && mentionName[mentionName.length - 1] == ':'
+      mentionName = mentionName[0..-2]
+    result = @robot.brain.userForName(mentionName)
+    return result != null
+
   findMentionNameByUser: (user_name) ->
     for user_jid, user of @robot.brain.data.users
       if user.name == user_name
@@ -150,8 +157,13 @@ module.exports = (robot) ->
       msg.send "Why are you minus minusing yourself, #{name}?"
       return
 
-    newScore = scoreKeeper.subtract(real_name, from)
-    if newScore? then msg.send "#{real_name} has #{newScore} points."
+    if scoreKeeper.isUser(name)
+      msg.send "Bad!"
+      newScore = scoreKeeper.subtract(from, real_name)
+      if newScore? then msg.send "#{from} has #{newScore} points."
+    else
+      newScore = scoreKeeper.subtract(real_name, from)
+      if newScore? then msg.send "#{real_name} has #{newScore} points."
 
   robot.respond /score (for\s)?(.*)/i, (msg) ->
     name = msg.match[2].trim().toLowerCase()
