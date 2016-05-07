@@ -55,6 +55,16 @@ class ScoreKeeper
         return user.name
     return mentionName
 
+  isUser: (mentionName) ->
+    mentionName = mentionName.replace(/@/g, "")
+    # Slack trailing colon filter
+    if mentionName[0] != ':' && mentionName[mentionName.length - 1] == ':'
+      mentionName = mentionName[0..-2]
+    for user_jid, user of @robot.brain.data.users
+      if user.mention_name == mentionName
+        return true
+    return false
+
   findMentionNameByUser: (user_name) ->
     for user_jid, user of @robot.brain.data.users
       if user.name == user_name
@@ -150,8 +160,13 @@ module.exports = (robot) ->
       msg.send "Why are you minus minusing yourself, #{name}?"
       return
 
-    newScore = scoreKeeper.subtract(real_name, from)
-    if newScore? then msg.send "#{real_name} has #{newScore} points."
+    if scoreKeeper.isUser(real_name)
+      newScore = scoreKeeper.subtract(from, real_name)
+      newScore = scoreKeeper.subtract(from, real_name)
+      if newScore? then msg.send "Bad! #{from} has #{newScore} points."
+    else
+      newScore = scoreKeeper.subtract(real_name, from)
+      if newScore? then msg.send "#{real_name} has #{newScore} points."
 
   robot.respond /score (for\s)?(.*)/i, (msg) ->
     name = msg.match[2].trim().toLowerCase()
