@@ -45,7 +45,6 @@ class AliasStore
 
   addAlias: (alias, names) ->
     @cache.aliasToNames[alias] = names
-    debugger
     for n in names
       @cache.namesToAliases[n] ||= []
       @cache.namesToAliases[n].push alias
@@ -54,27 +53,26 @@ class AliasStore
     setTimeout((-> self.saveAlias(alias, names)), 0)
 
   getAliases: (name) ->
-    debugger
     return @cache.namesToAliases[name]
 
 module.exports = (robot) ->
   aliasStore = new AliasStore(robot)
 
-  robot.respond /(?:alias set|set alias) @?(\S+) @?(\S+)$/i, (msg) ->
+  robot.respond /(?:alias set|set alias) @?([\w\-]+) @?([\w\-]+)$/i, (msg) ->
     alias = msg.match[1]
     names = [msg.match[2]]
     aliasStore.addAlias(alias, names)
 
     msg.send "Set alias from `@#{alias}` to `@#{names}`"
 
-  robot.respond /(?:alias set|set alias) @?(\S+) \[@?((?:\S+,\s+@?)*\S+)\]$/i, (msg) ->
+  robot.respond /(?:alias set|set alias) @?([\w\-]+) \[@?((?:[\w\-]+,\s+@?)*[\w\-]+)\]$/i, (msg) ->
     alias = msg.match[1]
     names = msg.match[2].split(/, ?@?/)
     aliasStore.addAlias(alias, names)
 
     msg.send "Set alias from `@#{alias}` to `@#{names.join(' @')}`"
 
-  robot.respond /(?:alias get|get alias) @?(\S+)$/i, (msg) ->
+  robot.respond /(?:alias get|get alias) @?([\w\-]+)$/i, (msg) ->
     name = msg.match[1]
     aliases = aliasStore.getAliases(name)
     if aliases
@@ -82,7 +80,7 @@ module.exports = (robot) ->
     else
       msg.send "No aliases for `#{name}`."
 
-  robot.hear /(@\S+)/g, (msg) ->
+  robot.hear /(@[\w\-]+)/g, (msg) ->
     if msg.message.text.match(/((s|g)et alias|alias (s|g)et)/)
       return
     mentions = []
