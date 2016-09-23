@@ -160,7 +160,7 @@ class ScoreKeeper {
   }
 
   bottom(amount) {
-    all = this.top(this.cache.scores.length);
+    let all = this.top(this.cache.scores.length);
     return all.sort((a,b) => b.score - a.score).reverse().slice(0,amount);
   }
 }
