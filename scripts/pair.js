@@ -8,7 +8,7 @@
 //   None
 //
 // Commands:
-//   hubot proc
+//   hubot pair <slack channel>
 //
 // Author:
 //   jiefu + milman
@@ -134,7 +134,7 @@ function _shuffleUsers(usersInChannel) {
 }
 
 module.exports = function(robot) {
-  robot.hear(/pair (.*)/i, function(msg) {
+  robot.respond(/pair (.*)/i, function(msg) {
     let slackChannel = msg.match[1];
     return msg.send(getUsers(msg, robot, slackChannel));
   });
