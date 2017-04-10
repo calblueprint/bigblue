@@ -24,6 +24,7 @@ function getUsers(msg, robot, slackChannel) {
 
   /* Randomized pairs of all the users */
   let allPairs = _pairUpAllUsers(usersInChannel);
+  console.log(allPairs)
 
   /* Generate and respond with all the pairs */
   for (let i = 0; i < allPairs.length; i++) {
@@ -36,6 +37,10 @@ function getUsers(msg, robot, slackChannel) {
     response += "\n";
   }
 
+  if (response === "") {
+    return "No pairs found -- did you enter a correct channel name?";  
+  }
+  
   return response;
 }
 
@@ -49,8 +54,13 @@ function _pairUpAllUsers(usersInChannel) {
   let pair = [];
   let numUsers = usersInChannel.length;
 
-  /* If there are less than 3 users in the channel, just return them */
-  if (usersInChannel.length <= 3) {
+  /* If there are no users in the channel, return nothing */
+  if (numUsers == 0) {
+    return pairs;
+  }
+
+  /* If there are less than 3 users in the channel, just add all of them */
+  if (numUsers <= 3) {
     pairs.push(usersInChannel);
     return pairs;
   }
@@ -65,19 +75,17 @@ function _pairUpAllUsers(usersInChannel) {
 
   /* Create group of three if number of users in channel is odd */
   if (numUsers % 2 == 1) {
-    pairs[0].push(usersInChannel(numUsers - 1));
+    pairs[0].push(usersInChannel[numUsers - 1]);
   }
 
   return pairs;
 }
 
 function getAllUsersInChannel(msg, robot, channelName) {
-  let slackChannelDatastore = robot.adapter.client.format.dataStore;
-
   /* All the slack channel objects in this slack */
-  let allSlackChannels = slackChannelDatastore.channels;
+  let allSlackChannels = robot.adapter.client.channels;
   /* All the user objects in this slack */
-  let allSlackUsers = slackChannelDatastore.users;
+  let allSlackUsers = robot.adapter.client.users;
   /* Keys of all the channels, unique ID for each channel */
   let channelKeys = Object.keys(allSlackChannels);
   /* Keys of all the users, unique ID for each user */
