@@ -166,23 +166,53 @@ class ScoreKeeper {
 }
 
 module.exports = function(robot) {
+  const EMOJIS = [
+    ":tada:",
+    ":clap:",
+    ":sparkles:",
+    ":arrow_up:",
+    ":white_check_mark:",
+    ":raised_hands:",
+    ":boom:",
+    ":fast-parrot:"
+  ];
+
   let scoreKeeper = new ScoreKeeper(robot);
 
   robot.hear(/([\w\S]+)([\W\s]*)?(\+\+)(.*)$/i, function(msg) {
-    let name = msg.match[1].trim();
-    let from = msg.message.user.name;
-    let real_name = scoreKeeper.findUserByMentionName(name);
-    if (from === real_name) {
-      msg.send("Don't be selfish, " + name + ".");
+    const fromName = msg.message.user.name;
+    if (fromName === "slackbot") {
       return;
     }
-    if (from === 'slackbot') {
-      return;
+
+    const parser = /([\w\S]+)([\W\s]*)?(\+{2})/gi;
+    let name = parser.exec(msg.message.text);
+    let messageComponents = [];
+    let firstInMessage = true;
+
+    while (name) {
+      let realName = scoreKeeper.findUserByMentionName(name[1].trim()); 
+
+      if (fromName === realName) {
+        messageComponents.push("Don't be selfish, " + realName + ".");
+        name = parser.exec(msg.message.text);
+        continue;
+      }
+
+      let newScore = scoreKeeper.add(realName, fromName);
+      if (newScore != null) {
+        messageComponents.push(
+          `${firstInMessage ? "That" : "that"} brings *${realName}* `
+          + `up to ${newScore} points. `
+          + EMOJIS[Math.floor(EMOJIS.length * Math.random())]
+        );
+      }
+      firstInMessage = false;
+      name = parser.exec(msg.message.text);
     }
-    let newScore = scoreKeeper.add(real_name, from);
-    if (newScore != null) {
-      return msg.send(real_name + " has " + newScore + " points.");
-    }
+
+    let message = messageComponents.join("\n... and ");
+    return msg.send(message);
   });
 
   robot.hear(/([\w\S]+)([\W\s]*)?(\-\-)(.*)$/i, function(msg) {
