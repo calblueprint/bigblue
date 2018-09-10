@@ -215,7 +215,7 @@ module.exports = function(robot) {
     return msg.send(message);
   });
 
-  robot.hear(/([\w\S]+)([\W\s]*)?(\-\-)(.*)$/i, function(msg) {
+  robot.hear(/([0-9A-Za-z]+)+\-\-(\s|$)/i, function(msg) {
     let name = msg.match[1].trim();
     let from = msg.message.user.name;
     let real_name = scoreKeeper.findUserByMentionName(name);
