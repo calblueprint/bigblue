@@ -15,8 +15,8 @@ while True:
             os.system("/home/ubuntu/bigblue/daemon.sh restart")
             print("reboot bigblue at")
             print(datetime.datetime.now()) 
-            count = 0
-            time.sleep(10)
+            count = 1
+            time.sleep(30)
         else:
             time.sleep(30)
             count += 1

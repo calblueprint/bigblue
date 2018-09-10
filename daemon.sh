@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH=/home/ubuntu/.nvm/v0.10.48/bin:$PATH
+
 HUBOT_ROOT="/home/ubuntu/bigblue/"
 HUBOT_HOME="/home/ubuntu/bigblue/node_modules/hubot"
 

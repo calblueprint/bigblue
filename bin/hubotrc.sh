@@ -1,5 +1,7 @@
 #!/bin/sh
 
+PATH=/home/ubuntu/.nvm/v0.10.48/bin:$PATH
+
 set -e
 
 npm install
