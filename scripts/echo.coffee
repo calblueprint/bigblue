@@ -1,7 +1,7 @@
-module.exports = (robot) ->
+#module.exports = (robot) ->
 
-  robot.hear /(.*)$/i, (msg) ->
-    room = msg.message.room
-    from = msg.message.user.name
+ # robot.hear /(.*)$/i, (msg) ->
+ #   room = msg.message.room
+ #   from = msg.message.user.name
 
 

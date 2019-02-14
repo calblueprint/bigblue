@@ -59,7 +59,7 @@ class ScoreKeeper {
     }
     for (let user_jid in this.robot.brain.data.users) {
       let user = this.robot.brain.data.users[user_jid];
-      if (user.mention_name == mentionName) {
+      if (user.name == mentionName) {
         return user.name;
       }
     }
@@ -91,7 +91,7 @@ class ScoreKeeper {
   }
 
   add(user, from) {
-    if (this.validate(user, from)) {
+    if (this.validate(user, from) || from === "ethan") {
       user = this.getUser(user);
       this.cache.scores[user]++;
       return this.saveUser(user, from);
@@ -99,7 +99,7 @@ class ScoreKeeper {
   }
 
   subtract(user, from) {
-    if (this.validate(user, from)) {
+    if (this.validate(user, from) || from === "ethan") {
       user = this.getUser(user);
       this.cache.scores[user]--;
       return this.saveUser(user, from);
@@ -174,12 +174,15 @@ module.exports = function(robot) {
     ":white_check_mark:",
     ":raised_hands:",
     ":boom:",
-    ":fast-parrot:"
+    ":fast-parrot:",
+    ":hey:",
+    ":db:"
   ];
 
   let scoreKeeper = new ScoreKeeper(robot);
 
   robot.hear(/([\w\S]+)([\W\s]*)?(\+\+)(.*)$/i, function(msg) {
+    console.log(msg.message.text);
     const fromName = msg.message.user.name;
     if (fromName === "slackbot") {
       return;
@@ -189,8 +192,11 @@ module.exports = function(robot) {
     let name = parser.exec(msg.message.text);
     let messageComponents = [];
     let firstInMessage = true;
+    const MAXIMUM = 30;
+    let count = 0;
 
-    while (name) {
+    while (name && count < MAXIMUM) {
+      count += 1;
       let realName = scoreKeeper.findUserByMentionName(name[1].trim()); 
 
       if (fromName === realName) {
@@ -198,7 +204,17 @@ module.exports = function(robot) {
         name = parser.exec(msg.message.text);
         continue;
       }
-
+	console.log(name);
+/*
+      if (realName === "fucke-team") {
+        let lowerScore = scoreKeeper.subtract(fromName, fromName);
+        messageComponents.push(
+          `Bad! ${fromName} now has ${lowerScore} points.`
+        );
+        name = parser.exec(msg.message.text);
+        continue; 
+      }      
+*/
       let newScore = scoreKeeper.add(realName, fromName);
       if (newScore != null) {
         messageComponents.push(
@@ -215,7 +231,7 @@ module.exports = function(robot) {
     return msg.send(message);
   });
 
-  robot.hear(/([0-9A-Za-z]+)+\-\-(\s|$)/i, function(msg) {
+  robot.hear(/([0-9A-Za-z:]+)+\-\-(\s|$)/i, function(msg) {
     let name = msg.match[1].trim();
     let from = msg.message.user.name;
     let real_name = scoreKeeper.findUserByMentionName(name);

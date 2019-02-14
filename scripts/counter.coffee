@@ -53,10 +53,10 @@ class Counter
 module.exports = (robot) ->
   counter = new Counter(robot)
 
-  robot.hear /(.*)$/i, (msg) ->
-    room = msg.message.room
-    from = msg.message.user.name
-    counter.add(room, from)
+  #robot.hear /(.*)$/i, (msg) ->
+  #  room = msg.message.room
+  #  from = msg.message.user.name
+  #  counter.add(room, from)
 
   robot.respond /stats (top|bottom) (\d+)/i, (msg) ->
     amount = parseInt(msg.match[2])

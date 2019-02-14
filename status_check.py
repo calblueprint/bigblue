@@ -12,7 +12,7 @@ while True:
         assert(r.status_code == 200)
         status = json.loads(r.text)
         if status["presence"] != "active" or count % 2880 == 0:
-            os.system("/home/ubuntu/bigblue/daemon.sh restart")
+            os.system("pm2 restart coffee")
             print("reboot bigblue at")
             print(datetime.datetime.now()) 
             count = 1
