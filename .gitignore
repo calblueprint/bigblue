@@ -1,3 +1,9 @@
 node_modules
 .DS_Store*
 .hubot_history
+status_check.py
+
+dump
+dump.bak
+dumpback
+package-lock.json
