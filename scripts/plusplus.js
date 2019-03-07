@@ -91,7 +91,7 @@ class ScoreKeeper {
   }
 
   add(user, from) {
-    if (this.validate(user, from) || from === "ethan") {
+    if (this.validate(user, from) || from === "aivantg") {
       user = this.getUser(user);
       this.cache.scores[user]++;
       return this.saveUser(user, from);
@@ -99,7 +99,7 @@ class ScoreKeeper {
   }
 
   subtract(user, from) {
-    if (this.validate(user, from) || from === "ethan") {
+    if (this.validate(user, from) || from === "aivantg") {
       user = this.getUser(user);
       this.cache.scores[user]--;
       return this.saveUser(user, from);
