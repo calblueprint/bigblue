@@ -1,5 +1,5 @@
 module.exports = function(robot) { 
-  return robot.hear(/how do you feel?/i, function(msg) { 
-    return msg.send("AHHHHHH *cough* I'm good!");
+  return robot.hear(/up!/i, function(msg) { 
+    return msg.send("I'm BACK, what did I miss?");
   });
 };
