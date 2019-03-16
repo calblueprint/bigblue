@@ -98,8 +98,8 @@ class ScoreKeeper {
     }
   }
 
-  subtract(user, from) {
-    if (this.validate(user, from, true) || from === "aivantg") { 
+  subtract(user, from, protectSpam) {
+    if (this.validate(user, from, protectSpam) || from === "aivantg") { 
       user = this.getUser(user);
       this.cache.scores[user]--;
       return this.saveUser(user, from);
@@ -241,12 +241,12 @@ module.exports = function(robot) {
     }
     if (scoreKeeper.isUser(name)) {
       msg.send("Cherish Eachother! :rage:");
-      let newScore = scoreKeeper.subtract(from, real_name);
+      let newScore = scoreKeeper.subtract(from, real_name, false);
       if (newScore != null) {
         return msg.send(from + " has " + newScore + " points.");
       }
     } else {
-      let newScore = scoreKeeper.subtract(real_name, from);
+      let newScore = scoreKeeper.subtract(real_name, from, true);
       if (newScore != null) {
         return msg.send(real_name + " has " + newScore + " points.");
       }
