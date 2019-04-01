@@ -188,7 +188,7 @@ module.exports = function(robot) {
       return;
     }
 
-    const parser = /([\w\S]+)([\W\s]*)?(\+{2})/gi;
+    const parser = /([\w\S]+)([\W\s]*)?(\-{2})/gi;
     let name = parser.exec(msg.message.text);
     let messageComponents = [];
     let firstInMessage = true;
@@ -219,7 +219,7 @@ module.exports = function(robot) {
       if (newScore != null) {
         messageComponents.push(
           `${firstInMessage ? "That" : "that"} brings *${realName}* `
-          + `up to ${newScore} points. `
+          + `down to ${newScore} points. `
           + EMOJIS[Math.floor(EMOJIS.length * Math.random())]
         );
       }
