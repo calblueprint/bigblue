@@ -181,7 +181,7 @@ module.exports = function(robot) {
 
   let scoreKeeper = new ScoreKeeper(robot);
 
-  robot.hear(/([\w\S]+)([\W\s]*)?(\+\+)(.*)$/i, function(msg) {
+  robot.hear(/([\w\S]+)([\W\s]*)?(\-\-)(.*)$/i, function(msg) {
     console.log(msg.message.text);
     const fromName = msg.message.user.name;
     if (fromName === "slackbot") {
@@ -231,16 +231,19 @@ module.exports = function(robot) {
     return msg.send(message);
   });
 
-  robot.hear(/([0-9A-Za-z:]+)+\s?\-\-(\s|$)/i, function(msg) {
+  robot.hear(/([0-9A-Za-z:]+)+\s?\+\+(\s|$)/i, function(msg) {
     let name = msg.match[1].trim();
     let from = msg.message.user.name;
+    if (from === "slackbot") {
+      return;
+    }
     let real_name = scoreKeeper.findUserByMentionName(name);
     if (from === real_name) {
-      msg.send("Why are you minus minusing yourself, " + name + "?");
+      msg.send("Why are you plus plusing yourself, " + name + "?");
       return;
     }
     if (scoreKeeper.isUser(name)) {
-      msg.send("Cherish Eachother! :rage:");
+      msg.send("Bad!");
       let newScore = scoreKeeper.subtract(from, real_name, false);
       if (newScore != null) {
         return msg.send(from + " has " + newScore + " points.");
