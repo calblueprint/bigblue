@@ -219,7 +219,7 @@ module.exports = function(robot) {
       if (newScore != null) {
         messageComponents.push(
           `${firstInMessage ? "That" : "that"} brings *${realName}* `
-          + `down to ${newScore} points. `
+          + `up to ${newScore} points. `
           + EMOJIS[Math.floor(EMOJIS.length * Math.random())]
         );
       }
@@ -248,7 +248,7 @@ module.exports = function(robot) {
     } else {
       let newScore = scoreKeeper.subtract(real_name, from, true);
       if (newScore != null) {
-        return msg.send(real_name + " has " + newScore + " points.");
+        return msg.send(`That brings ${real_name} down to ${newScore} points.`);
       }
     }
   });
