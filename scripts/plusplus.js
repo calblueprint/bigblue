@@ -181,14 +181,14 @@ module.exports = function(robot) {
 
   let scoreKeeper = new ScoreKeeper(robot);
 
-  robot.hear(/([0-9A-Za-z:]+)+\s?\-\-(\s|$)/i, function(msg) {
+  robot.hear(/([0-9A-Za-z:]+)+\s?\+\+(\s|$)/i, function(msg) {
     console.log(msg.message.text);
     const fromName = msg.message.user.name;
     if (fromName === "slackbot") {
       return;
     }
 
-    const parser = /([\w\S]+)([\W\s]*)?(\-{2})/gi;
+    const parser = /([\w\S]+)([\W\s]*)?(\+{2})/gi;
     let name = parser.exec(msg.message.text);
     let messageComponents = [];
     let firstInMessage = true;
@@ -231,7 +231,7 @@ module.exports = function(robot) {
     return msg.send(message);
   });
 
-  robot.hear(/([\w\S]+)([\W\s]*)?(\+\+)(.*)$/i, function(msg) {
+  robot.hear(/([\w\S]+)([\W\s]*)?(\-\-)(.*)$/i, function(msg) {
     let name = msg.match[1].trim();
     let from = msg.message.user.name;
     let real_name = scoreKeeper.findUserByMentionName(name);
