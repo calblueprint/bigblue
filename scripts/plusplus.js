@@ -236,7 +236,7 @@ module.exports = function(robot) {
     let from = msg.message.user.name;
     let real_name = scoreKeeper.findUserByMentionName(name);
     if (from === real_name) {
-      msg.send("Why are you plus plusing yourself, " + name + "?");
+      msg.send("Why are you minus minusing yourself, " + name + "?");
       return;
     }
     if (scoreKeeper.isUser(name)) {
