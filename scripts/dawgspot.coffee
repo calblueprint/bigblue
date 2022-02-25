@@ -1,26 +1,18 @@
 
 handleReaction = (res) ->
   message = res.message
+
+  if (message.rawMessage.channel != "C0XD6UEGH") {
+    return false
+  }
+
   item = message.item
-
-  switch item.type
-    when 'message'
-      desc = "the message from channel #{item.channel} at time #{item.ts}"
-
-    when 'file'
-      desc = "the file with ID #{item.file}"
-
-    when 'file_comment'
-      desc = "the comment with ID #{item.file_comment} for file #{item.file}"
-
-    else
-      desc = "an item of type #{item.type} that I don't recognize"
-
   type = message.type
+  console.log(message)
   user = "#{message.user.real_name} (@#{message.user.name})"
   reaction = message.reaction
-  preposition = if type is 'added' then 'to' else 'from'
-  res.reply "#{user} #{type} a *#{reaction}* reaction #{preposition} #{desc}."
+
+  res.reply "#{user} #{type} a *#{reaction}*."
 
 module.exports = (robot) ->
   robot.react handleReaction
