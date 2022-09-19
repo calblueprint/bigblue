@@ -12,6 +12,10 @@ has, etc!
 [hubot]: http://hubot.github.com
 [generator-hubot]: https://github.com/github/generator-hubot
 
+### Resetting BigBlue
+
+https://calblueprint.notion.site/BigBlue-Documentation-9eec2a6f6cc24c19b5e4efe3c72a862e
+
 ### Running bigblue Locally
 
 You can test your hubot by running the following, however some plugins will not
